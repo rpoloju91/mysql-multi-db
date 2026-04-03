@@ -1,0 +1,39 @@
+# ==========================================
+# SERVER CONFIGURATION
+# ==========================================
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ticketing-system
+
+  # ==========================================
+  # MASTER DATABASE CONFIGURATION
+  # ==========================================
+  # This is the central database that holds the 'tenant_config' table.
+  # Your application connects here first to find out where to route the client.
+  datasource:
+    url: jdbc:mysql://localhost:3306/ticketing_master?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+    # Connection Pool Settings for the Master DB
+    hikari:
+      pool-name: Master-DB-Pool
+      maximum-pool-size: 5  # Keep this low; it's only queried when a new tenant logs in
+      minimum-idle: 2
+      connection-timeout: 30000
+
+# ==========================================
+# SWAGGER / OPENAPI CONFIGURATION
+# ==========================================
+# Automatically exposes your endpoints at http://localhost:8080/swagger-ui.html
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha

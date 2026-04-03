@@ -1,0 +1,32 @@
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+app:
+  aws:
+    rds:
+      use-iam-auth: false
+      host: localhost
+      port: 3306
+      region: us-east-1
+  jwt:
+    secret: dGVzdC1zZWNyZXQta2V5LWZvci11bml0LXRlc3RzLW9ubHktMjU2Yml0cw==
+    expiration-ms: 3600000
+  master-datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+    pool:
+      maximum-pool-size: 2
+      minimum-idle: 1
+  tenant-datasource:
+    url-template: jdbc:h2:mem:{schema};DB_CLOSE_DELAY=-1;MODE=MySQL
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+    pool:
+      maximum-pool-size: 2
+      minimum-idle: 1
