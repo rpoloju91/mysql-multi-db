@@ -165,3 +165,18 @@ public class TenantController {
         return ResponseEntity.ok("Tenant and Mapping created successfully for: " + request.getTenantId());
     }
 }
+
+
+-----------------------
+http://localhost:8080/api/tenants/register
+
+{
+    "tenantId": "client_b",
+    "hostName": "jdbc:mysql://localhost:3306/client_b_db",
+    "username": "root",
+    "port": 3306,
+    "region": "us-east-1",
+    "active": true,
+    "cognitoAppClientId": "app_client_id_456",
+    "role": "admin"
+}
