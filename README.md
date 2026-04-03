@@ -1,9 +1,14 @@
 insert data into master table
 
+
+
+
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
+
+
 
 @Entity
 @Table(name = "tenant_config")
@@ -36,6 +41,8 @@ public class TenantConfig {
 }
 
 ------------------------------
+
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -96,3 +103,65 @@ public class TenantService {
     }
 }
 ------------------
+
+import lombok.Data;
+
+@Data
+public class TenantRegistrationRequest {
+    // Fields for tenant_config
+    private String tenantId;
+    private String hostName;
+    private String username;
+    private Integer port;
+    private String region;
+    private Boolean active;
+
+    // Fields for tenant_config_mapping
+    private String cognitoAppClientId;
+    private String role;
+}
+
+
+---------------------------------
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import jakarta.transaction.Transactional;
+
+@RestController
+@RequestMapping("/api/tenants")
+public class TenantController {
+
+    @Autowired
+    private TenantConfigRepository configRepo;
+
+    @Autowired
+    private TenantMappingRepository mappingRepo;
+
+    @PostMapping("/register")
+    @Transactional // Ensures both inserts succeed or both fail (Atomicity)
+    public ResponseEntity<String> registerTenant(@RequestBody TenantRegistrationRequest request) {
+        
+        // 1. Create and Save the Tenant Config (The Parent)
+        TenantConfig config = new TenantConfig();
+        config.setTenantId(request.getTenantId());
+        config.setHostName(request.getHostName());
+        config.setUsername(request.getUsername());
+        config.setPort(request.getPort() != null ? request.getPort() : 3306);
+        config.setRegion(request.getRegion());
+        config.setActive(request.getActive() != null ? request.getActive() : true);
+        
+        configRepo.save(config);
+
+        // 2. Create and Save the Mapping (The Child)
+        TenantConfigMapping mapping = new TenantConfigMapping();
+        mapping.setCognitoAppClientId(request.getCognitoAppClientId());
+        mapping.setRole(request.getRole());
+        mapping.setTenantConfig(config); // Link the child to the parent object
+        
+        mappingRepo.save(mapping);
+
+        return ResponseEntity.ok("Tenant and Mapping created successfully for: " + request.getTenantId());
+    }
+}
