@@ -37,3 +37,10 @@ springdoc:
     path: /swagger-ui.html
     tags-sorter: alpha
     operations-sorter: alpha
+
+
+logging:
+  level:
+   
+    com.hlt.api.security: DEBUG 
+    org.springframework.security: INFO
